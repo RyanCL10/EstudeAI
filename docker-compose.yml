@@ -1,0 +1,35 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: estudeai_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: estudeai_app
+      MYSQL_USER: root
+      MYSQL_PASSWORD: admin
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: estudeai_backend
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/code
+    ports:
+      - "8000:8000"
+    environment:
+    DATABASE_URL: mysql+pymysql://root:266322%40Ry@localhost:3306/estudeai_app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+volumes:
+  db_data:
